@@ -1,0 +1,30 @@
+server:
+  port: ${Values.carpro.server.port:8089}
+
+spring:
+  application:
+    name: miya-home-service
+
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://${Values.carpro.datasource.host:localhost}:${Values.carpro.datasource.port:3306}/${Values.carpro.datasource.db.name:carpro}?serverTimezone=GMT%2B8&useSSL=true&useUnicode=true&characterEncoding=utf8
+    username: ${Values.global.datasource.username:root}
+    password: ${Values.global.datasource.password:San5525.}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 30000       # 等待连接池分配连接的最大时长（毫秒），超过这个时长还没可用的连接则发生SQLException， 默认:30秒
+      minimum-idle: 5                 # 最小连接数
+      maximum-pool-size: 20           # 最大连接数
+      auto-commit: true               # 自动提交
+      idle-timeout: 600000            # 连接超时的最大时长（毫秒），超时则被释放（retired），默认:10分钟
+      pool-name: DateSourceHikariCP     # 连接池名字
+      max-lifetime: 1800000           # 连接的生命时长（毫秒），超时而且没被使用则被释放（retired），默认:30分钟 1800000ms
+      connection-test-query: SELECT 1
+
+
+  # mybatis-plus配置
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+
+knife4j:
+  production: false
