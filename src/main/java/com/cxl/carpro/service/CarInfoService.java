@@ -17,5 +17,11 @@ public interface CarInfoService {
      */
     List<CarInfoDO> getList();
 
+    /**
+     * book car
+     *
+     * @param bookDTO
+     * @return
+     */
     Boolean bookCar(BookDTO bookDTO);
 }

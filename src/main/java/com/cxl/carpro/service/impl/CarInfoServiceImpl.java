@@ -3,6 +3,7 @@ package com.cxl.carpro.service.impl;
 import com.cxl.carpro.comom.ResultCode;
 import com.cxl.carpro.dao.model.CarInfoDO;
 import com.cxl.carpro.dao.model.RentalInfoDO;
+import com.cxl.carpro.dao.model.UserInfoDO;
 import com.cxl.carpro.entity.dto.BookDTO;
 import com.cxl.carpro.exception.BusinessException;
 import com.cxl.carpro.service.CarInfoService;
@@ -29,6 +30,10 @@ public class CarInfoServiceImpl implements CarInfoService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean bookCar(BookDTO bookDTO) {
+        if(!isUserExist(bookDTO.getUserId())){
+            log.error("user not exist");
+            throw new BusinessException(ResultCode.BOOK_PARAM_INVALID,"user not exist");
+        }
         CarInfoDO carInfoDO = getCarInfo(bookDTO.getId());
         if(carInfoDO == null || carInfoDO.getCarStock() <= 0){
             throw new BusinessException(ResultCode.BOOK_NO_CAR_FOUND,"no car can book");
@@ -49,7 +54,7 @@ public class CarInfoServiceImpl implements CarInfoService {
         rentalInfoDO.setEndTime(bookDTO.getEndTime());
         rentalInfoDO.setUserId(bookDTO.getUserId());
         rentalInfoDO.setCarId(bookDTO.getId());
-        rentalInfoDO.setCarModel(car.getCarModel());
+        rentalInfoDO.setCarModel(carInfoDO.getCarModel());
         rentalInfoDO.setBookTime(LocalDateTime.now());
         result = rentalInfoDO.insertOrUpdate();
         if(!result){
@@ -66,5 +71,17 @@ public class CarInfoServiceImpl implements CarInfoService {
     private CarInfoDO getCarInfo(Integer id){
         CarInfoDO carInfoDO = new CarInfoDO();
         return carInfoDO.selectById(id);
+    }
+
+    /**
+     *  is user exist
+     * @return
+     */
+    private Boolean isUserExist(Integer id){
+        UserInfoDO user = new UserInfoDO();
+        if(user.selectById(id) == null){
+            return false;
+        }
+        return true;
     }
 }
